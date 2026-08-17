@@ -28,11 +28,40 @@ describe("Mini HTML Editor Tests", () => {
             if (command === "bold") {
                 editor.innerHTML = "Hello <strong>World</strong>";
             }
+            if (command === "italic") {
+                editor.innerHTML = "Hello <em>World</em>";
+            }
         });
 
         executeCommand("bold");
 
         expect(document.execCommand).toHaveBeenCalledWith("bold", false, null);
         expect(editor.innerHTML).toContain("<strong>World</strong>");
+    });
+
+    test("Italic command applies formatting", () => {
+        const editor = document.getElementById("editor");
+        
+        // Select "World"
+        const range = document.createRange();
+        const textNode = editor.firstChild;
+        range.setStart(textNode, 6);
+        range.setEnd(textNode, 11);
+        
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        // Mock execCommand behavior
+        document.execCommand = jest.fn((command, showUI, value) => {
+            if (command === "italic") {
+                editor.innerHTML = "Hello <em>World</em>";
+            }
+        });
+
+        executeCommand("italic");
+
+        expect(document.execCommand).toHaveBeenCalledWith("italic", false, null);
+        expect(editor.innerHTML).toContain("<em>World</em>");
     });
 });
