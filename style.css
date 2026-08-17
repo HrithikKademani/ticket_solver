@@ -106,21 +106,6 @@ header h1 {
     background-color: var(--toolbar-btn-active);
 }
 
-.toolbar-select {
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background-color: #fff;
-    color: var(--text-color);
-    font-size: 0.85rem;
-    cursor: pointer;
-    outline: none;
-}
-
-.toolbar-select:focus {
-    border-color: var(--primary-color);
-}
-
 /* Editor Container */
 .editor-container {
     position: relative;
@@ -140,21 +125,6 @@ header h1 {
     margin-bottom: 1rem;
 }
 
-#editor ul, #editor ol {
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-#editor h1, #editor h2, #editor h3 {
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
-
-#editor h1 { font-size: 1.8rem; }
-#editor h2 { font-size: 1.4rem; }
-#editor h3 { font-size: 1.2rem; }
-
 /* Placeholder Styling */
 .editor-placeholder {
     position: absolute;
@@ -172,84 +142,6 @@ header h1 {
     display: none;
 }
 
-/* HTML Output Section */
-.output-wrapper {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.25rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-.output-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.output-header h2 {
-    font-size: 1.1rem;
-    color: #475569;
-}
-
-.output-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.status-msg {
-    font-size: 0.85rem;
-    color: #10b981;
-    font-weight: 500;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.status-msg.show {
-    opacity: 1;
-}
-
-.action-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.15s ease;
-}
-
-.action-btn:hover {
-    background-color: var(--primary-hover);
-}
-
-.clear-btn {
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-}
-
-.clear-btn:hover {
-    background-color: #f1f5f9;
-    border-color: #cbd5e1;
-}
-
-.output-code {
-    background-color: #1e293b;
-    color: #f8fafc;
-    padding: 1rem;
-    border-radius: 6px;
-    font-family: Consolas, Monaco, "Andale Mono", monospace;
-    font-size: 0.9rem;
-    max-height: 200px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
-}
 
 /* Responsive configurations */
 @media (max-width: 650px) {

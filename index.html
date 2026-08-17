@@ -23,35 +23,6 @@
                     <button class="toolbar-btn" data-command="italic" title="Italic (Ctrl+I)"><i>I</i></button>
                     <button class="toolbar-btn" data-command="underline" title="Underline (Ctrl+U)"><u>U</u></button>
                 </div>
-
-                <div class="toolbar-group">
-                    <select class="toolbar-select" id="heading-select" title="Text Formatting">
-                        <option value="p">Normal</option>
-                        <option value="h1">Heading 1</option>
-                        <option value="h2">Heading 2</option>
-                        <option value="h3">Heading 3</option>
-                    </select>
-                </div>
-
-                <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="insertUnorderedList" title="Bullet List">• List</button>
-                    <button class="toolbar-btn" data-command="insertOrderedList" title="Numbered List">1. List</button>
-                </div>
-
-                <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="justifyLeft" title="Align Left">Left</button>
-                    <button class="toolbar-btn" data-command="justifyCenter" title="Align Center">Center</button>
-                    <button class="toolbar-btn" data-command="justifyRight" title="Align Right">Right</button>
-                </div>
-
-                <div class="toolbar-group">
-                    <button class="toolbar-btn" id="link-btn" title="Insert Link">🔗</button>
-                </div>
-
-                <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="undo" title="Undo (Ctrl+Z)">↶</button>
-                    <button class="toolbar-btn" data-command="redo" title="Redo (Ctrl+Y)">↷</button>
-                </div>
             </div>
 
             <!-- Editor Area -->
@@ -59,19 +30,6 @@
                 <div id="editor" contenteditable="true" spellcheck="true"></div>
                 <div id="placeholder" class="editor-placeholder">Start typing here...</div>
             </div>
-        </div>
-
-        <!-- HTML Output Section -->
-        <div class="output-wrapper">
-            <div class="output-header">
-                <h2>Generated HTML</h2>
-                <div class="output-actions">
-                    <span id="copy-status" class="status-msg"></span>
-                    <button id="copy-btn" class="action-btn">Copy HTML</button>
-                    <button id="clear-btn" class="action-btn clear-btn">Clear</button>
-                </div>
-            </div>
-            <pre class="output-code"><code id="html-output"></code></pre>
         </div>
     </div>
 
