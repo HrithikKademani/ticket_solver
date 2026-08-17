@@ -66,11 +66,6 @@ function executeCommand(command, value = null) {
         return false;
     }
 
-    // INTENTIONAL BUG: Break italic formatting to test AI agent
-    if (normalizedCommand.toLowerCase() === "italic") {
-        return false;
-    }
-
     const selection = window.getSelection();
     let rangeToRestore = null;
 
