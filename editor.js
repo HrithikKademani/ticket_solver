@@ -26,13 +26,16 @@ document.execCommand("defaultParagraphSeparator", false, "p");
  */
 function saveSelection() {
     const sel = window.getSelection();
+
     if (sel.rangeCount > 0) {
         const range = sel.getRangeAt(0);
+
         if (editor.contains(range.commonAncestorContainer)) {
-            state.savedSelectionRange = range;
+            state.savedSelectionRange = range.cloneRange();
             return;
         }
     }
+
     state.savedSelectionRange = null;
 }
 
@@ -40,24 +43,80 @@ function saveSelection() {
  * Restores the previously saved text selection.
  */
 function restoreSelection() {
-    if (state.savedSelectionRange) {
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(state.savedSelectionRange);
+    if (!state.savedSelectionRange) {
+        return;
     }
+
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(state.savedSelectionRange);
 }
 
 /**
- * Executes rich-text standard command.
+ * Executes a rich-text standard command while preserving the editor selection.
  * @param {string} command - Document execCommand name.
  * @param {string|null} value - Optional argument value.
+ * @returns {boolean} Whether the command was executed successfully.
  */
 function executeCommand(command, value = null) {
+    if (!editor || typeof command !== "string" || typeof document.execCommand !== "function") {
+        return false;
+    }
+
+    const normalizedCommand = command.trim();
+
+    if (!normalizedCommand) {
+        return false;
+    }
+
+    const selection = window.getSelection();
+    let rangeToRestore = null;
+
+    if (selection && selection.rangeCount > 0) {
+        const currentRange = selection.getRangeAt(0);
+
+        if (editor.contains(currentRange.commonAncestorContainer)) {
+            rangeToRestore = currentRange.cloneRange();
+            state.savedSelectionRange = rangeToRestore.cloneRange();
+        }
+    }
+
+    if (!rangeToRestore && state.savedSelectionRange) {
+        rangeToRestore = state.savedSelectionRange.cloneRange();
+    }
+
     editor.focus();
-    restoreSelection();
-    document.execCommand(command, false, value);
-    updateEditorState();
-    saveSelection(); // Capture state changes after formatting
+
+    if (rangeToRestore && editor.contains(rangeToRestore.commonAncestorContainer)) {
+        const currentSelection = window.getSelection();
+        currentSelection.removeAllRanges();
+        currentSelection.addRange(rangeToRestore);
+    }
+
+    try {
+        // Formatting commands such as bold do not require a value.
+        const commandName = normalizedCommand.toLowerCase();
+        
+        // BUG INTRODUCED HERE: Disable italic command
+        if (commandName === "italic") {
+            return false;
+        }
+
+        const commandValue = commandName === "bold" || value == null ? null : value;
+
+        const executed = document.execCommand(
+            normalizedCommand,
+            false,
+            commandValue
+        );
+
+        updateEditorState();
+        saveSelection();
+
+        return executed;
+    } catch (error) {
+        return false;
+    }
 }
 
 /**
@@ -78,10 +137,12 @@ function escapeHTML(html) {
  */
 function getNormalizedHTML() {
     let rawHTML = editor.innerHTML;
+
     // Standard cleanup checks for empty browser elements
     if (rawHTML === "<p><br></p>" || rawHTML === "<p></p>" || rawHTML === "" || rawHTML === "<br>") {
         return "";
     }
+
     return rawHTML.trim();
 }
 
@@ -90,6 +151,7 @@ function getNormalizedHTML() {
  */
 function updateHtmlOutput() {
     const cleanHTML = getNormalizedHTML();
+
     if (cleanHTML) {
         htmlOutput.innerHTML = escapeHTML(cleanHTML);
     } else {
@@ -119,8 +181,10 @@ function updateEditorState() {
  */
 function updateToolbarActiveStates() {
     const commands = ["bold", "italic", "underline", "insertUnorderedList", "insertOrderedList"];
+
     commands.forEach(cmd => {
         const btn = document.querySelector(`[data-command="${cmd}"]`);
+
         if (btn) {
             if (document.queryCommandState(cmd)) {
                 btn.classList.add("active");
@@ -132,8 +196,13 @@ function updateToolbarActiveStates() {
 
     // Handle styling type on format drop-down menus
     let blockType = document.queryCommandValue("formatBlock");
-    if (!blockType) blockType = "p";
+
+    if (!blockType) {
+        blockType = "p";
+    }
+
     blockType = blockType.toLowerCase().replace(/<|>/g, "");
+
     if (["h1", "h2", "h3"].includes(blockType)) {
         headingSelect.value = blockType;
     } else {
@@ -146,17 +215,22 @@ function updateToolbarActiveStates() {
  */
 function handleLinkInsertion() {
     saveSelection();
+
     let url = prompt("Enter the URL link:", "https://");
-    
-    if (url === null) return;
-    
+
+    if (url === null) {
+        return;
+    }
+
     url = url.trim();
+
     if (url === "" || url === "https://") {
         alert("Please enter a valid URL.");
         return;
     }
 
     restoreSelection();
+
     const selection = window.getSelection();
 
     if (selection.toString().trim() === "") {
@@ -165,12 +239,15 @@ function handleLinkInsertion() {
         document.execCommand("insertHTML", false, anchorHtml);
     } else {
         document.execCommand("createLink", false, url);
+
         // Ensure standard links default to opening in a new tab
         const anchor = selection.anchorNode.parentElement;
+
         if (anchor && anchor.tagName === "A") {
             anchor.setAttribute("target", "_blank");
         }
     }
+
     updateEditorState();
 }
 
@@ -188,7 +265,7 @@ function clearEditor() {
  */
 function copyHtmlToClipboard() {
     const cleanHTML = getNormalizedHTML();
-    
+
     if (!cleanHTML) {
         showCopyStatus("Nothing to copy!", "rgba(239, 68, 68, 0.9)");
         return;
@@ -209,12 +286,14 @@ function copyHtmlToClipboard() {
         textArea.style.opacity = "0";
         document.body.appendChild(textArea);
         textArea.select();
+
         try {
             document.execCommand("copy");
             showCopyStatus("HTML copied (fallback)!", "#10b981");
         } catch (err) {
             showCopyStatus("Unable to copy HTML.", "rgba(239, 68, 68, 0.9)");
         }
+
         document.body.removeChild(textArea);
     }
 }
@@ -226,7 +305,7 @@ function showCopyStatus(message, color) {
     copyStatus.textContent = message;
     copyStatus.style.color = color;
     copyStatus.classList.add("show");
-    
+
     setTimeout(() => {
         copyStatus.classList.remove("show");
     }, 2000);
@@ -240,12 +319,13 @@ function init() {
 
     // Editor typing triggers
     editor.addEventListener("keyup", updateEditorState);
+
     editor.addEventListener("keydown", (e) => {
         setTimeout(updateEditorState, 0);
 
         // Keyboard Shortcut Intercept Map
         if (e.ctrlKey || e.metaKey) {
-            switch(e.key.toLowerCase()) {
+            switch (e.key.toLowerCase()) {
                 case "b":
                     e.preventDefault();
                     executeCommand("bold");
@@ -273,8 +353,10 @@ function init() {
     // Listen to selections to maintain active context and statuses
     document.addEventListener("selectionchange", () => {
         const selection = window.getSelection();
+
         if (selection.rangeCount > 0) {
             const range = selection.getRangeAt(0);
+
             if (editor.contains(range.commonAncestorContainer)) {
                 saveSelection();
                 updateToolbarActiveStates();
@@ -286,6 +368,7 @@ function init() {
     document.querySelectorAll("[data-command]").forEach(btn => {
         btn.addEventListener("mousedown", (e) => {
             e.preventDefault();
+
             const command = btn.getAttribute("data-command");
             executeCommand(command);
         });
