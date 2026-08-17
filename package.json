@@ -1,0 +1,13 @@
+{
+  "name": "simple-html-editor",
+  "version": "1.0.0",
+  "description": "Mini JavaScript HTML Editor Sandbox",
+  "type": "commonjs",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}
