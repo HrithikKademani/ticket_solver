@@ -65,11 +65,6 @@ function executeCommand(command, value = null) {
     if (!normalizedCommand) {
         return false;
     }
-    
-    // INTENTIONAL BUG: Break bold formatting to test AI agent
-    if (normalizedCommand.toLowerCase() === "bold") {
-        return false;
-    }
 
     const selection = window.getSelection();
     let rangeToRestore = null;
