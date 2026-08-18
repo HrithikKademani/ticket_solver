@@ -93,4 +93,50 @@ describe("Mini HTML Editor Tests", () => {
         expect(document.execCommand).toHaveBeenCalledWith("underline", false, null);
         expect(editor.innerHTML).toContain("<u>World</u>");
     });
+
+    test("Strikethrough command applies formatting", () => {
+        const editor = document.getElementById("editor");
+        const range = document.createRange();
+        const textNode = editor.firstChild;
+        range.setStart(textNode, 6);
+        range.setEnd(textNode, 11);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        document.execCommand = jest.fn((command, showUI, value) => {
+            if (command === "strikethrough") {
+                editor.innerHTML = "Hello <s>World</s>";
+            }
+        });
+
+        executeCommand("strikethrough");
+
+        expect(document.execCommand).toHaveBeenCalledWith("strikethrough", false, null);
+        expect(editor.innerHTML).toContain("<s>World</s>");
+    });
+
+    test("RemoveFormat command clears formatting", () => {
+        const editor = document.getElementById("editor");
+        editor.innerHTML = "Hello <b>World</b>";
+        
+        const range = document.createRange();
+        const textNode = editor.firstChild;
+        range.setStart(textNode, 6);
+        range.setEnd(textNode, 11);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        document.execCommand = jest.fn((command, showUI, value) => {
+            if (command === "removeformat") {
+                editor.innerHTML = "Hello World";
+            }
+        });
+
+        executeCommand("removeformat");
+
+        expect(document.execCommand).toHaveBeenCalledWith("removeformat", false, null);
+        expect(editor.innerHTML).not.toContain("<b>World</b>");
+    });
 });
