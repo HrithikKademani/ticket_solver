@@ -66,10 +66,6 @@ function executeCommand(command, value = null) {
         return false;
     }
 
-    // INTENTIONAL BUG: Break underline formatting to test new Agent Tools
-    if (normalizedCommand.toLowerCase() === "underline") {
-        return false;
-    }
 
     const selection = window.getSelection();
     let rangeToRestore = null;
